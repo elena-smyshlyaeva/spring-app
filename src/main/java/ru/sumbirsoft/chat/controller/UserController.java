@@ -1,0 +1,42 @@
+package ru.sumbirsoft.chat.controller;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import ru.sumbirsoft.chat.dto.user.RequestUserDto;
+import ru.sumbirsoft.chat.dto.user.ResponseUserDto;
+import ru.sumbirsoft.chat.service.UserService;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/user")
+public class UserController {
+
+    UserService userService;
+
+    @GetMapping
+    public List<ResponseUserDto> getAll() {
+        return userService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseUserDto getById(@PathVariable(name = "id") long id) {
+        return userService.findById(id);
+    }
+
+    @PostMapping
+    public ResponseUserDto create(@RequestBody RequestUserDto requestUserDto) {
+        return userService.create(requestUserDto);
+    }
+
+    @PutMapping
+    public ResponseUserDto edit(@RequestBody RequestUserDto requestUserDto) {
+        return userService.edit(requestUserDto);
+    }
+
+    @DeleteMapping
+    public boolean delete(@RequestParam long id) {
+        return userService.deleteById(id);
+    }
+}
