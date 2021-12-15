@@ -10,7 +10,7 @@ public interface UserService {
 
     List<ResponseUserDto> findAll();
     ResponseUserDto findById(long id);
-    ResponseUserDto edit(RequestUserDto requestUserDto);
+    ResponseUserDto edit(long id, RequestUserDto requestUserDto);
     ResponseUserDto create(RequestUserDto requestUserDto);
     boolean deleteById(long id);
 }

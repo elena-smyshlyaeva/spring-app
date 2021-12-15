@@ -8,7 +8,7 @@ import java.util.List;
 public interface RoomService {
     List<ResponseRoomDto> findAll();
     ResponseRoomDto findById(long id);
-    ResponseRoomDto edit(RequestRoomDto requestUserDto);
+    ResponseRoomDto edit(long id, RequestRoomDto requestUserDto);
     ResponseRoomDto create(RequestRoomDto requestUserDto);
     boolean deleteById(long id);
 }
