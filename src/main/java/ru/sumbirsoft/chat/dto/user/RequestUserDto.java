@@ -1,7 +1,7 @@
 package ru.sumbirsoft.chat.dto.user;
 
 import lombok.Data;
-import ru.sumbirsoft.chat.domain.Members;
+import ru.sumbirsoft.chat.domain.UserRoom;
 import ru.sumbirsoft.chat.domain.Room;
 
 import java.util.Set;
@@ -11,5 +11,5 @@ public class RequestUserDto {
     private String login;
     private String password;
     Set<Room> ownerIn;
-    Set<Members> memberIn;
+    Set<UserRoom> memberIn;
 }
