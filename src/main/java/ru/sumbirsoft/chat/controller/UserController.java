@@ -31,8 +31,9 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseUserDto edit(@RequestBody RequestUserDto requestUserDto) {
-        return userService.edit(requestUserDto);
+    public ResponseUserDto edit(@PathVariable(name = "id") long id,
+                                @RequestBody RequestUserDto requestUserDto) {
+        return userService.edit(id, requestUserDto);
     }
 
     @DeleteMapping

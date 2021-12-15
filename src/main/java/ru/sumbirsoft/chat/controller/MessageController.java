@@ -1,7 +1,6 @@
 package ru.sumbirsoft.chat.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.sumbirsoft.chat.dto.message.RequestMessageDto;
@@ -15,7 +14,6 @@ import java.util.List;
 @RequestMapping("/message")
 public class MessageController {
     MessageService messageService;
-    ModelMapper modelMapper;
 
     @GetMapping
     public List<ResponseMessageDto> getAll() {
@@ -33,8 +31,9 @@ public class MessageController {
     }
 
     @PutMapping
-    public ResponseMessageDto edit(@RequestBody RequestMessageDto requestMessageDto) {
-        return messageService.edit(requestMessageDto);
+    public ResponseMessageDto edit(@PathVariable(name = "id") long id,
+                                   @RequestBody RequestMessageDto requestMessageDto) {
+        return messageService.edit(id, requestMessageDto);
     }
 
     @DeleteMapping

@@ -30,8 +30,9 @@ public class RoomController {
     }
 
     @PutMapping
-    public ResponseRoomDto edit(@RequestBody RequestRoomDto requestRoomDto) {
-        return roomService.edit(requestRoomDto);
+    public ResponseRoomDto edit(@PathVariable(name = "id") long id,
+                                @RequestBody RequestRoomDto requestRoomDto) {
+        return roomService.edit(id, requestRoomDto);
     }
 
     @DeleteMapping
