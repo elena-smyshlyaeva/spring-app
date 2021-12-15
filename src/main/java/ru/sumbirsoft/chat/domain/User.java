@@ -24,8 +24,8 @@ public class User {
     private String password;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
-    Set<Room> rooms;
+    Set<Room> ownerIn;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
-    Set<Members> memberIn;
+    Set<UserRoom> memberIn;
 }

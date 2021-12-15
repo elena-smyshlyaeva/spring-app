@@ -23,5 +23,5 @@ public class Room {
     User owner;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "room")
-    Set<Members> members;
+    Set<UserRoom> members;
 }
