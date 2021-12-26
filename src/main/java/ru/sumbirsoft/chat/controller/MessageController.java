@@ -13,7 +13,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/message")
 public class MessageController {
-    MessageService messageService;
+
+    private final MessageService messageService;
 
     @GetMapping
     public List<ResponseMessageDto> getAll() {

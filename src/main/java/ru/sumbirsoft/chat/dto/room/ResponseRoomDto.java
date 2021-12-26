@@ -1,7 +1,7 @@
 package ru.sumbirsoft.chat.dto.room;
 
 import lombok.Data;
-import ru.sumbirsoft.chat.domain.UserRoom;
+import ru.sumbirsoft.chat.domain.Members;
 import ru.sumbirsoft.chat.domain.User;
 
 import java.util.Set;
@@ -12,5 +12,5 @@ public class ResponseRoomDto {
     private String name;
     private boolean isPrivate;
     private User owner;
-    private Set<UserRoom> members;
+    private Set<Members> roomUsers;
 }

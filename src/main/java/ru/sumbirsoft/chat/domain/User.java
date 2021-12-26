@@ -1,5 +1,6 @@
 package ru.sumbirsoft.chat.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -7,7 +8,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "user")
-@Data
+@Getter
+@Setter
 public class User {
     @Column(nullable = false)
     @Id
@@ -23,9 +25,11 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
     Set<Room> ownerIn;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
-    Set<UserRoom> memberIn;
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    Set<Members> userRooms;
 }

@@ -1,5 +1,7 @@
 package ru.sumbirsoft.chat.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -7,7 +9,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "room")
-@Data
+@Getter
+@Setter
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,12 +19,15 @@ public class Room {
     @Column(nullable = false)
     private String name;
 
+    @Column
     private boolean isPrivate;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id")
     User owner;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "room")
-    Set<UserRoom> members;
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "room")
+    Set<Members> roomUsers;
 }

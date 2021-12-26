@@ -1,6 +1,7 @@
 package ru.sumbirsoft.chat.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.sumbirsoft.chat.dto.room.RequestRoomDto;
 import ru.sumbirsoft.chat.dto.room.ResponseRoomDto;
@@ -12,7 +13,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/room")
 public class RoomController {
-    RoomService roomService;
+    
+    private final RoomService roomService;
 
     @GetMapping
     public List<ResponseRoomDto> getAll() {
