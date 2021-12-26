@@ -1,5 +1,6 @@
 package ru.sumbirsoft.chat.service.implementation;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,17 +10,18 @@ import ru.sumbirsoft.chat.dto.room.ResponseRoomDto;
 import ru.sumbirsoft.chat.mapper.RoomMapper;
 import ru.sumbirsoft.chat.repository.RoomRepository;
 import ru.sumbirsoft.chat.service.RoomService;
-import ru.sumbirsoft.chat.service.exception.RoomNotFoundException;
+import ru.sumbirsoft.chat.exceptions.RoomNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService {
 
-    RoomRepository repository;
-    RoomMapper roomMapper;
+    private final RoomRepository repository;
+    private final RoomMapper roomMapper;
 
     @Override
     @Transactional(readOnly = true)

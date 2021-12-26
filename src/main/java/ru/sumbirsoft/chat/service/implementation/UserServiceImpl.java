@@ -10,7 +10,7 @@ import ru.sumbirsoft.chat.dto.user.ResponseUserDto;
 import ru.sumbirsoft.chat.mapper.UserMapper;
 import ru.sumbirsoft.chat.repository.UserRepository;
 import ru.sumbirsoft.chat.service.UserService;
-import ru.sumbirsoft.chat.service.exception.UserNotFoundException;
+import ru.sumbirsoft.chat.exceptions.UserNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +27,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<ResponseUserDto> findAll() {
-        return repository.findAll().stream()
+        return repository.findAll()
+                .stream()
                 .map(userMapper::userToResponseUserDto)
                 .collect(Collectors.toList());
     }

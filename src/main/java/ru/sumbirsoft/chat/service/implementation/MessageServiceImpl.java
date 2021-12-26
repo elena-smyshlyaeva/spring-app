@@ -1,5 +1,6 @@
 package ru.sumbirsoft.chat.service.implementation;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,17 +10,18 @@ import ru.sumbirsoft.chat.dto.message.ResponseMessageDto;
 import ru.sumbirsoft.chat.mapper.MessageMapper;
 import ru.sumbirsoft.chat.repository.MessageRepository;
 import ru.sumbirsoft.chat.service.MessageService;
-import ru.sumbirsoft.chat.service.exception.MessageNotFoundException;
+import ru.sumbirsoft.chat.exceptions.MessageNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
 
-    MessageRepository repository;
-    MessageMapper messageMapper;
+    private final MessageRepository repository;
+    private final MessageMapper messageMapper;
 
     @Override
     @Transactional(readOnly = true)
