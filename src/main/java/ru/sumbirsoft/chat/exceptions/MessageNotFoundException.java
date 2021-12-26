@@ -1,4 +1,4 @@
-package ru.sumbirsoft.chat.service.exception;
+package ru.sumbirsoft.chat.exceptions;
 
 public class MessageNotFoundException extends RuntimeException{
     public MessageNotFoundException(long id) {

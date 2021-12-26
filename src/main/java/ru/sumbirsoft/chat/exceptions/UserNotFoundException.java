@@ -1,4 +1,4 @@
-package ru.sumbirsoft.chat.service.exception;
+package ru.sumbirsoft.chat.exceptions;
 
 public class UserNotFoundException extends RuntimeException{
     public UserNotFoundException(long id) {

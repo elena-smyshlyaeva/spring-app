@@ -1,4 +1,4 @@
-package ru.sumbirsoft.chat.service.exception;
+package ru.sumbirsoft.chat.exceptions;
 
 public class RoomNotFoundException extends RuntimeException{
     public RoomNotFoundException(long id) {
