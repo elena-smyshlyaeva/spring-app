@@ -19,10 +19,7 @@ import java.util.Map;
  */
 
 @ControllerAdvice
-@RequiredArgsConstructor
 public class BaseControllerAdvice {
-
-    private final DateTimeFormatter isoDateTimeFormatter;
 
     private Object response(HttpStatus status, AbstractException e) {
         HttpHeaders headers = new HttpHeaders();
@@ -32,7 +29,7 @@ public class BaseControllerAdvice {
         body.put("message", e.getMessage());
         body.put("techInfo", e.getInfo());
         body.put("status", status.toString());
-        body.put("timestamp", isoDateTimeFormatter.format(ZonedDateTime.now()));
+        body.put("timestamp", DateTimeFormatter.ISO_ZONED_DATE_TIME.format((ZonedDateTime.now())));
 
         return new ResponseEntity<>(body, headers, status);
     }
