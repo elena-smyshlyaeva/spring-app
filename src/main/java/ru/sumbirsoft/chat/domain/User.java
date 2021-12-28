@@ -7,29 +7,35 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Getter
 @Setter
 public class User {
-    @Column(nullable = false)
+    @Column(name = "user_id")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long userId;
 
-    @Column(nullable = false)
+    @Column(name = "username")
     private String username;
 
-    @Column(nullable = false)
-    private String login;
-
-    @Column(nullable = false)
+    @Column(name = "password")
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Role role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private Status status;
+
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
     Set<Room> ownerIn;
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     Set<Members> userRooms;
+
 }

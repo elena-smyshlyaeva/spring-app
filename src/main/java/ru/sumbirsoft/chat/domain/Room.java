@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "room")
+@Table(name = "rooms")
 @Getter
 @Setter
 public class Room {
@@ -28,6 +28,6 @@ public class Room {
     User owner;
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "room")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "room")
     Set<Members> roomUsers;
 }
