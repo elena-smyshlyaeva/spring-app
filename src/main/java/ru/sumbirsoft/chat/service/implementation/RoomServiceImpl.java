@@ -7,10 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sumbirsoft.chat.domain.Room;
 import ru.sumbirsoft.chat.dto.room.RequestRoomDto;
 import ru.sumbirsoft.chat.dto.room.ResponseRoomDto;
+import ru.sumbirsoft.chat.exceptions.ResourceNotFoundException;
 import ru.sumbirsoft.chat.mapper.RoomMapper;
 import ru.sumbirsoft.chat.repository.RoomRepository;
 import ru.sumbirsoft.chat.service.RoomService;
-import ru.sumbirsoft.chat.exceptions.RoomNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +39,7 @@ public class RoomServiceImpl implements RoomService {
         if (roomOptional.isPresent()) {
             return roomMapper.roomToResponseRoomDto(roomOptional.get());
         }
-        throw new RoomNotFoundException(id);
+        throw new ResourceNotFoundException("Room doesn't exist", Long.toString(id));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class RoomServiceImpl implements RoomService {
             repository.save(room);
             return roomMapper.roomToResponseRoomDto(room);
         }
-        throw new RoomNotFoundException(id);
+        throw new ResourceNotFoundException("Room doesn't exist", Long.toString(id));
     }
 
     @Override
@@ -73,6 +73,6 @@ public class RoomServiceImpl implements RoomService {
             repository.deleteById(id);
             return true;
         }
-        throw new RoomNotFoundException(id);
+        throw new ResourceNotFoundException("Room doesn't exist", Long.toString(id));
     }
 }

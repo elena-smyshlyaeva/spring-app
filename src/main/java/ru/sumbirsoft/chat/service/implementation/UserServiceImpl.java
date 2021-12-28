@@ -7,10 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sumbirsoft.chat.domain.User;
 import ru.sumbirsoft.chat.dto.user.RequestUserDto;
 import ru.sumbirsoft.chat.dto.user.ResponseUserDto;
+import ru.sumbirsoft.chat.exceptions.ResourceNotFoundException;
 import ru.sumbirsoft.chat.mapper.UserMapper;
 import ru.sumbirsoft.chat.repository.UserRepository;
 import ru.sumbirsoft.chat.service.UserService;
-import ru.sumbirsoft.chat.exceptions.UserNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +41,15 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             return userMapper.userToResponseUserDto(userOptional.get());
         }
-        throw new UserNotFoundException(id);
+        throw new ResourceNotFoundException("User doesn't exist", Long.toString(id));
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        Optional<User> userOptional = repository.findByUsername(username);
+        if (userOptional.isPresent())
+            return userOptional.get();
+        throw new ResourceNotFoundException("User doesn't exist", username);
     }
 
     @Override
@@ -55,7 +63,7 @@ public class UserServiceImpl implements UserService {
             repository.save(user);
             return userMapper.userToResponseUserDto(user);
         }
-        throw new UserNotFoundException(id);
+        throw new ResourceNotFoundException("User doesn't exist", Long.toString(id));
     }
 
     @Override
@@ -76,6 +84,6 @@ public class UserServiceImpl implements UserService {
             repository.deleteById(id);
             return true;
         }
-        throw new UserNotFoundException(id);
+        throw new ResourceNotFoundException("User doesn't exist", Long.toString(id));
     }
 }

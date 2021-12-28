@@ -7,10 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sumbirsoft.chat.domain.Message;
 import ru.sumbirsoft.chat.dto.message.RequestMessageDto;
 import ru.sumbirsoft.chat.dto.message.ResponseMessageDto;
+import ru.sumbirsoft.chat.exceptions.ResourceNotFoundException;
 import ru.sumbirsoft.chat.mapper.MessageMapper;
 import ru.sumbirsoft.chat.repository.MessageRepository;
 import ru.sumbirsoft.chat.service.MessageService;
-import ru.sumbirsoft.chat.exceptions.MessageNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +39,7 @@ public class MessageServiceImpl implements MessageService {
         if (messageOptional.isPresent()) {
             return messageMapper.messageToResponseMessageDto(messageOptional.get());
         }
-        throw new MessageNotFoundException(id);
+        throw new ResourceNotFoundException("Message doesn't exist", Long.toString(id));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class MessageServiceImpl implements MessageService {
             repository.save(message);
             return messageMapper.messageToResponseMessageDto(message);
         }
-        throw new MessageNotFoundException(id);
+        throw new ResourceNotFoundException("Message doesn't exist", Long.toString(id));
     }
 
     @Override
@@ -73,6 +73,6 @@ public class MessageServiceImpl implements MessageService {
             repository.deleteById(id);
             return true;
         }
-        throw new MessageNotFoundException(id);
+        throw new ResourceNotFoundException("Message doesn't exist", Long.toString(id));
     }
 }
