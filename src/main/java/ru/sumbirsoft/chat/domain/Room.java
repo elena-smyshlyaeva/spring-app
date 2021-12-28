@@ -13,8 +13,8 @@ import java.util.Set;
 @Setter
 public class Room {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long roomId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long roomId;
 
     @Column(nullable = false)
     private String name;

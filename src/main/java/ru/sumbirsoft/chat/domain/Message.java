@@ -11,7 +11,7 @@ import java.sql.Date;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long msgId;
+    private Long msgId;
 
     @OneToOne
     @JoinColumn(name = "user_id")

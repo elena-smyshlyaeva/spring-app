@@ -3,12 +3,15 @@ package ru.sumbirsoft.chat.config;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.sumbirsoft.chat.domain.Role;
 import ru.sumbirsoft.chat.domain.Status;
 import ru.sumbirsoft.chat.domain.User;
 
 import java.util.Collection;
 import java.util.List;
+
+/**
+ * Wrapper class of custom {@link ru.sumbirsoft.chat.domain.User} to use UserDetails.
+ */
 
 public class JwtUser implements UserDetails {
 

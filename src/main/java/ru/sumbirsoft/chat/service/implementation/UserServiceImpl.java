@@ -11,7 +11,6 @@ import ru.sumbirsoft.chat.exceptions.ResourceNotFoundException;
 import ru.sumbirsoft.chat.mapper.UserMapper;
 import ru.sumbirsoft.chat.repository.UserRepository;
 import ru.sumbirsoft.chat.service.UserService;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,7 +21,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final UserMapper userMapper;
-
 
     @Override
     @Transactional(readOnly = true)
@@ -42,14 +40,6 @@ public class UserServiceImpl implements UserService {
             return userMapper.userToResponseUserDto(userOptional.get());
         }
         throw new ResourceNotFoundException("User doesn't exist", Long.toString(id));
-    }
-
-    @Override
-    public User findByUsername(String username) {
-        Optional<User> userOptional = repository.findByUsername(username);
-        if (userOptional.isPresent())
-            return userOptional.get();
-        throw new ResourceNotFoundException("User doesn't exist", username);
     }
 
     @Override

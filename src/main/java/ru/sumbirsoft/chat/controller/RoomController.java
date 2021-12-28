@@ -1,7 +1,6 @@
 package ru.sumbirsoft.chat.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.sumbirsoft.chat.dto.room.RequestRoomDto;
 import ru.sumbirsoft.chat.dto.room.ResponseRoomDto;

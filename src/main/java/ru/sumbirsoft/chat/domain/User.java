@@ -13,8 +13,8 @@ import java.util.Set;
 public class User {
     @Column(name = "user_id")
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
 
     @Column(name = "username")
     private String username;
@@ -37,5 +37,4 @@ public class User {
     @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     Set<Members> userRooms;
-
 }

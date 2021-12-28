@@ -1,11 +1,7 @@
 package ru.sumbirsoft.chat.service;
 
-import ru.sumbirsoft.chat.domain.User;
 import ru.sumbirsoft.chat.dto.message.RequestMessageDto;
 import ru.sumbirsoft.chat.dto.message.ResponseMessageDto;
-import ru.sumbirsoft.chat.dto.user.RequestUserDto;
-import ru.sumbirsoft.chat.dto.user.ResponseUserDto;
-
 import java.util.List;
 
 public interface MessageService {

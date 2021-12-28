@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class ResponseUserDto {
-    private long userId;
+    private Long userId;
     private String username;
 }

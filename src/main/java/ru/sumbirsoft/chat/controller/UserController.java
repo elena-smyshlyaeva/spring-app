@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.sumbirsoft.chat.dto.user.RequestUserDto;
 import ru.sumbirsoft.chat.dto.user.ResponseUserDto;
 import ru.sumbirsoft.chat.service.UserService;
-
 import java.util.List;
 
 @RestController

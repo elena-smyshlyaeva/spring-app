@@ -2,7 +2,6 @@ package ru.sumbirsoft.chat.service;
 
 import ru.sumbirsoft.chat.dto.room.RequestRoomDto;
 import ru.sumbirsoft.chat.dto.room.ResponseRoomDto;
-
 import java.util.List;
 
 public interface RoomService {

@@ -21,6 +21,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Control links to authenticate users.
+ */
+
 @RestController
 @RequestMapping("api/v1/auth")
 public class AuthenticationController {
@@ -62,5 +66,4 @@ public class AuthenticationController {
         SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
         securityContextLogoutHandler.logout(request, response, null);
     }
-
 }

@@ -1,17 +1,20 @@
 package ru.sumbirsoft.chat.domain;
 
 import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
+
+/**
+ * Composite key for ManyToMany-relationship table.
+ */
 
 @Embeddable
 @Data
 public class MemberKey implements Serializable {
     @Column(name = "user_id")
-    long userId;
+    Long userId;
 
     @Column(name = "room_id")
-    long roomId;
+    Long roomId;
 }

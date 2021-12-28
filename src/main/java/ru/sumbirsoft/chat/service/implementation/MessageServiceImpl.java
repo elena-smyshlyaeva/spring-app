@@ -11,7 +11,6 @@ import ru.sumbirsoft.chat.exceptions.ResourceNotFoundException;
 import ru.sumbirsoft.chat.mapper.MessageMapper;
 import ru.sumbirsoft.chat.repository.MessageRepository;
 import ru.sumbirsoft.chat.service.MessageService;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

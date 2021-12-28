@@ -3,6 +3,10 @@ package ru.sumbirsoft.chat.config;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 
+/**
+ * Class for processing exceptions with Json Web Tokens
+ */
+
 public class JwtAuthenticationException extends AuthenticationException {
 
     private HttpStatus httpStatus;

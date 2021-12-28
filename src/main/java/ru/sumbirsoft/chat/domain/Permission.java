@@ -1,5 +1,9 @@
 package ru.sumbirsoft.chat.domain;
 
+/**
+ * For more flexibility use permissions instead of roles.
+ */
+
 public enum Permission {
     USER_READ("user:read"), USER_WRITE("user:write");
 

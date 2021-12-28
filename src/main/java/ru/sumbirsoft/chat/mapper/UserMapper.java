@@ -1,13 +1,11 @@
 package ru.sumbirsoft.chat.mapper;
 
 import org.mapstruct.Mapper;
-import org.springframework.stereotype.Component;
 import ru.sumbirsoft.chat.domain.User;
 import ru.sumbirsoft.chat.dto.user.RequestUserDto;
 import ru.sumbirsoft.chat.dto.user.ResponseUserDto;
 
 @Mapper(componentModel = "spring")
-@Component("userMapper")
 public interface UserMapper {
     User responseUserDtoToUser(ResponseUserDto dto);
     ResponseUserDto userToResponseUserDto(User entity);

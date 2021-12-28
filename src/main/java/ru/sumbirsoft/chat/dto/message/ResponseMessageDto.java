@@ -1,16 +1,15 @@
 package ru.sumbirsoft.chat.dto.message;
 
 import lombok.Data;
-import ru.sumbirsoft.chat.domain.Room;
-import ru.sumbirsoft.chat.domain.User;
-
+import ru.sumbirsoft.chat.dto.room.ResponseRoomDto;
+import ru.sumbirsoft.chat.dto.user.ResponseUserDto;
 import java.sql.Date;
 
 @Data
 public class ResponseMessageDto {
-    private long msgId;
-    private User user;
-    private Room room;
+    private Long msgId;
+    private ResponseUserDto user;
+    private ResponseRoomDto room;
     private String text;
     private Date sendDate;
 }

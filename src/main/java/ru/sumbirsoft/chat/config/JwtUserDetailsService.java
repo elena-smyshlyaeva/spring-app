@@ -8,6 +8,10 @@ import org.springframework.stereotype.Service;
 import ru.sumbirsoft.chat.domain.User;
 import ru.sumbirsoft.chat.repository.UserRepository;
 
+/**
+ * Needs to load {@link ru.sumbirsoft.chat.domain.User} from database.
+ */
+
 @Service("jwtUserDetailsService")
 public class JwtUserDetailsService implements UserDetailsService {
 

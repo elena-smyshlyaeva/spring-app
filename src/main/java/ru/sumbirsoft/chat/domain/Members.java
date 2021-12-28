@@ -2,8 +2,11 @@ package ru.sumbirsoft.chat.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
-
 import javax.persistence.*;
+
+/**
+ * Many-to-many relationship of users and rooms.
+ */
 
 @Entity
 @Data
