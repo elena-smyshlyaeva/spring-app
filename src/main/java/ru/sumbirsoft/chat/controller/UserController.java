@@ -1,6 +1,7 @@
 package ru.sumbirsoft.chat.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.sumbirsoft.chat.dto.user.RequestUserDto;
 import ru.sumbirsoft.chat.dto.user.ResponseUserDto;
@@ -20,22 +21,26 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('user:read')")
     public ResponseUserDto getById(@PathVariable(name = "id") long id) {
         return userService.findById(id);
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('user:write')")
     public ResponseUserDto create(@RequestBody RequestUserDto requestUserDto) {
         return userService.create(requestUserDto);
     }
 
     @PutMapping
+    @PreAuthorize("hasAuthority('user:write')")
     public ResponseUserDto edit(@PathVariable(name = "id") long id,
                                 @RequestBody RequestUserDto requestUserDto) {
         return userService.edit(id, requestUserDto);
     }
 
     @DeleteMapping
+    @PreAuthorize("hasAuthority('user:write')")
     public boolean delete(@RequestParam long id) {
         return userService.deleteById(id);
     }
