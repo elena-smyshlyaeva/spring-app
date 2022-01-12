@@ -44,4 +44,28 @@ public class UserController {
     public boolean delete(@RequestParam long id) {
         return userService.deleteById(id);
     }
+
+    @PutMapping("/{id}/moderator")
+    @PreAuthorize("hasAuthority('user:appoint_moder')")
+    public ResponseUserDto appointModer(@PathVariable (name = "id") long id) {
+        return userService.appointModer(id);
+    }
+
+    @DeleteMapping("/{id}/moderator")
+    @PreAuthorize("hasAuthority('user:delete_moder')")
+    public ResponseUserDto deleteModer(@PathVariable (name = "id") long id){
+        return userService.deleteModer(id);
+    }
+
+    @DeleteMapping("/{id}/status")
+    @PreAuthorize("hasAuthority('user:ban')")
+    public ResponseUserDto blockUser(@PathVariable(name = "id") long id) {
+        return userService.blockUser(id);
+    }
+
+    @GetMapping("/{id}/status")
+    @PreAuthorize("hasAuthority('user:unban')")
+    public ResponseUserDto unblockUser(@PathVariable(name = "id") long id) {
+        return userService.unblockUser(id);
+    }
 }
