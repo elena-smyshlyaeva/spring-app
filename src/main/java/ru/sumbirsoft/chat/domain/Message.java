@@ -10,7 +10,7 @@ import java.sql.Date;
 @Data
 public class Message {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long msgId;
 
     @OneToOne
@@ -24,6 +24,5 @@ public class Message {
     @Column(nullable = false)
     private String text;
 
-    @Column(nullable = false)
     private Date sendDate;
 }

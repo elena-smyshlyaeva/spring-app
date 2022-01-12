@@ -1,12 +1,12 @@
 package ru.sumbirsoft.chat.service.implementation;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sumbirsoft.chat.domain.Message;
-import ru.sumbirsoft.chat.domain.Status;
-import ru.sumbirsoft.chat.domain.User;
 import ru.sumbirsoft.chat.dto.message.RequestMessageDto;
 import ru.sumbirsoft.chat.dto.message.ResponseMessageDto;
 import ru.sumbirsoft.chat.exceptions.ResourceNotFoundException;
@@ -76,7 +76,12 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean deleteById(long id) {
+    public boolean deleteById(long id, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        if (!userDetails.isAccountNonLocked()) {
+            throw new RuntimeException("User has BAN status");
+        }
+
         Optional<Message> messageOptional = repository.findById(id);
         if (messageOptional.isPresent()) {
             repository.deleteById(id);
@@ -87,24 +92,13 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public ResponseMessageDto sendMessage(long from, long to,
-                                          long room, RequestMessageDto requestMessageDto) {
-        User userFrom = userRepository.getById(from);
-        if (userFrom.getStatus() != Status.ACTIVE) {
+    public ResponseMessageDto sendMessage(RequestMessageDto message, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        if (!userDetails.isAccountNonLocked()) {
             throw new RuntimeException("User has BAN status");
         }
 
-        User userTo = userRepository.getById(to);
-        Message message = messageMapper.requestMessageDtoToMessage(requestMessageDto);
-
-        message.setUser(userTo);
-        message.setRoom(roomRepository.getById(room));
-        return messageMapper.messageToResponseMessageDto(repository.save(message));
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public ResponseMessageDto receiveMessage(long id) {
-        return messageMapper.messageToResponseMessageDto(repository.getById(id));
+        return messageMapper.messageToResponseMessageDto(repository
+                .save(messageMapper.requestMessageDtoToMessage(message)));
     }
 }

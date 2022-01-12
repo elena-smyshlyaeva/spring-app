@@ -2,10 +2,10 @@ package ru.sumbirsoft.chat.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.sumbirsoft.chat.dto.message.RequestMessageDto;
 import ru.sumbirsoft.chat.dto.message.ResponseMessageDto;
-import ru.sumbirsoft.chat.dto.user.RequestUserDto;
 import ru.sumbirsoft.chat.service.MessageService;
 
 import java.util.List;
@@ -34,21 +34,15 @@ public class MessageController {
     }
 
     @PostMapping
-    public ResponseMessageDto sendMessage(@RequestParam(name = "from") long from,
-                                          @RequestParam(name = "to") long to,
-                                          @RequestParam(name = "room") long room,
-                                          @RequestBody RequestMessageDto requestMessageDto) {
-        return messageService.sendMessage(from, to, room, requestMessageDto);
-    }
-
-    @GetMapping("/message")
-    public ResponseMessageDto receiveMessage(@RequestParam(name = "id") long id) {
-        return messageService.receiveMessage(id);
+    public ResponseMessageDto sendMessage(@RequestBody RequestMessageDto message,
+                                          Authentication authentication) {
+        return messageService.sendMessage(message, authentication);
     }
 
     @DeleteMapping
     @PreAuthorize("hasAuthority('message:delete')")
-    public boolean delete(@RequestParam(name = "id") long id) {
-        return messageService.deleteById(id);
+    public boolean delete(@RequestParam(name = "id") long id,
+                          Authentication authentication) {
+        return messageService.deleteById(id, authentication);
     }
 }
