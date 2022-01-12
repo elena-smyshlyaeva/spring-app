@@ -63,7 +63,7 @@ public class UserController {
         return userService.blockUser(id);
     }
 
-    @GetMapping("/{id}/status")
+    @PutMapping("/{id}/status")
     @PreAuthorize("hasAuthority('user:unban')")
     public ResponseUserDto unblockUser(@PathVariable(name = "id") long id) {
         return userService.unblockUser(id);
