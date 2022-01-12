@@ -10,4 +10,10 @@ public interface UserService {
     ResponseUserDto edit(long id, RequestUserDto requestUserDto);
     ResponseUserDto create(RequestUserDto requestUserDto);
     boolean deleteById(long id);
+
+    ResponseUserDto appointModer(long id);
+    ResponseUserDto deleteModer(long id);
+
+    ResponseUserDto blockUser(long id);
+    ResponseUserDto unblockUser(long id);
 }

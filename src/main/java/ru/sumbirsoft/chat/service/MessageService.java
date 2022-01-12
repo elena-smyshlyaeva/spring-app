@@ -10,4 +10,7 @@ public interface MessageService {
     ResponseMessageDto edit(long id, RequestMessageDto requestMessageDto);
     ResponseMessageDto create(RequestMessageDto requestMessageDto);
     boolean deleteById(long id);
+
+    ResponseMessageDto sendMessage(long from, long to, long room, RequestMessageDto requestMessageDto);
+    ResponseMessageDto receiveMessage(long id);
 }

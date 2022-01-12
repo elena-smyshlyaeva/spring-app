@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import ru.sumbirsoft.chat.domain.Permission;
+import ru.sumbirsoft.chat.domain.Role;
+import ru.sumbirsoft.chat.domain.Status;
 import ru.sumbirsoft.chat.domain.User;
 import ru.sumbirsoft.chat.dto.user.RequestUserDto;
 import ru.sumbirsoft.chat.dto.user.ResponseUserDto;
@@ -31,7 +34,6 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public ResponseUserDto findById(long id) {
@@ -49,15 +51,15 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             User user = userMapper.requestUserDtoToUser(requestUserDto);
             user.setUserId(id);
-
             repository.save(user);
+
             return userMapper.userToResponseUserDto(user);
         }
         throw new ResourceNotFoundException("User doesn't exist", Long.toString(id));
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ResponseUserDto create(RequestUserDto requestUserDto) {
         return userMapper.userToResponseUserDto(
                 repository.save(
@@ -67,12 +69,65 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean deleteById(long id) {
         Optional<User> userOptional = repository.findById(id);
         if (userOptional.isPresent()) {
             repository.deleteById(id);
+
             return true;
+        }
+        throw new ResourceNotFoundException("User doesn't exist", Long.toString(id));
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public ResponseUserDto appointModer(long id) {
+        Optional<User> userOptional = repository.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setRole(Role.MODERATOR);
+
+            return userMapper.userToResponseUserDto(user);
+        }
+        throw new ResourceNotFoundException("User doesn't exist", Long.toString(id));
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public ResponseUserDto deleteModer(long id) {
+        Optional<User> userOptional = repository.findById(id);
+        if (userOptional.isPresent()) {
+            User user =  userOptional.get();
+            user.setRole(Role.USER);
+
+            return userMapper.userToResponseUserDto(user);
+        }
+        throw new ResourceNotFoundException("User doesn't exist", Long.toString(id));
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public ResponseUserDto blockUser(long id) {
+        Optional<User> userOptional = repository.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setStatus(Status.BANNED);
+
+            return userMapper.userToResponseUserDto(user);
+        }
+        throw new ResourceNotFoundException("User doesn't exist", Long.toString(id));
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public ResponseUserDto unblockUser(long id) {
+        Optional<User> userOptional = repository.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setStatus(Status.ACTIVE);
+
+            return userMapper.userToResponseUserDto(user);
         }
         throw new ResourceNotFoundException("User doesn't exist", Long.toString(id));
     }
