@@ -9,3 +9,6 @@
 3. Hibernate
 4. JSON Web Token
 5. Maven
+
+#
+This is chat app with authentication and authorization. Users in the app have roles (USER, MODERATOR, ADMIN), permission and status(BAN, ACTIVE) to defining user's access.
