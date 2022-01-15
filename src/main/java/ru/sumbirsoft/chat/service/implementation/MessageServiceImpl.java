@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sumbirsoft.chat.domain.Message;
 import ru.sumbirsoft.chat.dto.message.RequestMessageDto;
 import ru.sumbirsoft.chat.dto.message.ResponseMessageDto;
+import ru.sumbirsoft.chat.exceptions.BanStatusException;
 import ru.sumbirsoft.chat.exceptions.ResourceNotFoundException;
 import ru.sumbirsoft.chat.mapper.MessageMapper;
 import ru.sumbirsoft.chat.mapper.UserMapper;
@@ -79,7 +80,7 @@ public class MessageServiceImpl implements MessageService {
     public boolean deleteById(long id, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         if (!userDetails.isAccountNonLocked()) {
-            throw new RuntimeException("User has BAN status");
+            throw new BanStatusException(userDetails.getUsername());
         }
 
         Optional<Message> messageOptional = repository.findById(id);
@@ -95,7 +96,7 @@ public class MessageServiceImpl implements MessageService {
     public ResponseMessageDto sendMessage(RequestMessageDto message, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         if (!userDetails.isAccountNonLocked()) {
-            throw new RuntimeException("User has BAN status");
+            throw new BanStatusException(userDetails.getUsername());
         }
 
         return messageMapper.messageToResponseMessageDto(repository
