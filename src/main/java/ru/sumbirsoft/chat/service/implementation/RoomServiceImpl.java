@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sumbirsoft.chat.domain.*;
 import ru.sumbirsoft.chat.dto.room.RequestRoomDto;
 import ru.sumbirsoft.chat.dto.room.ResponseRoomDto;
+import ru.sumbirsoft.chat.exceptions.BanStatusException;
+import ru.sumbirsoft.chat.exceptions.NotEnoughCredentialsException;
 import ru.sumbirsoft.chat.exceptions.ResourceNotFoundException;
 import ru.sumbirsoft.chat.mapper.RoomMapper;
 import ru.sumbirsoft.chat.repository.MembersRepository;
@@ -90,7 +92,7 @@ public class RoomServiceImpl implements RoomService {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         if (!userDetails.isAccountNonLocked())
-            throw new RuntimeException("User has BAN status");
+            throw new BanStatusException(userDetails.getUsername());
 
         Room room = roomMapper.requestRoomDtoToRoom(requestRoomDto);
         room.setOwner(userRepository.findByUsername(userDetails.getUsername()).get());
@@ -105,7 +107,7 @@ public class RoomServiceImpl implements RoomService {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         if (!userDetails.isAccountNonLocked())
-            throw new RuntimeException("User has BAN status");
+            throw new BanStatusException(userDetails.getUsername());
 
         User addedUser = userRepository.getById(userId);
         Room room = repository.getById(roomId);
@@ -134,29 +136,40 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean deleteUserFromRoom(long roomId, long userId, Authentication authentication) {
+    public boolean deleteUserFromRoom(long roomId, long deletedUserId, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         if (!userDetails.isAccountNonLocked()) {
-            throw new RuntimeException("User has BAN status");
+            throw new BanStatusException(userDetails.getUsername());
         }
 
-        User deletedUser = userRepository.getById(userId);
-        Set<Members> userRooms = deletedUser.getUserRooms();
-        Set<Members> roomUsers = repository.getById(roomId).getRoomUsers();
+        User user = userRepository
+                .findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found", userDetails.getUsername()));
+        long userId = user.getUserId();
+        long roomOwnerId = repository
+                .findById(roomId)
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found", Long.toString(roomId)))
+                .getOwner()
+                .getUserId();
 
-        userRooms.removeIf(members -> members.getRoom().getRoomId() == roomId);
-        roomUsers.removeIf(members -> members.getUser().getUserId() == userId);
+        MemberKey userRoomId = new MemberKey();
+        userRoomId.setRoomId(roomId);
+        userRoomId.setUserId(deletedUserId);
 
-        membersRepository.delete(
-                membersRepository
-                        .findAll()
-                        .stream()
-                        .filter(members ->
-                                members.getUser().getUserId() == userId && members.getRoom().getRoomId() == roomId)
-                        .findAny().orElseThrow(() ->
-                                new ResourceNotFoundException("Room or user doesn't exist", Long.toString(roomId)))
-        );
-        return true;
+        Members entry = membersRepository.getById(userRoomId);
+
+        if ((userId == roomOwnerId || entry.getRole() == Role.ADMIN) && user.getStatus() == Status.ACTIVE) {
+            Set<Members> userRooms = user.getUserRooms();
+            Set<Members> roomUsers = user.getUserRooms();
+
+            userRooms.removeIf(members -> members.getRoom().getRoomId() == roomId);
+            roomUsers.removeIf(members -> members.getUser().getUserId() == deletedUserId);
+
+            membersRepository.delete(entry);
+            return true;
+        }
+
+        throw new NotEnoughCredentialsException(userDetails.getUsername());
     }
 
     @Override
@@ -183,6 +196,6 @@ public class RoomServiceImpl implements RoomService {
 
             return roomMapper.roomToResponseRoomDto(repository.save(room));
         }
-        throw new RuntimeException("You haven't enough credentials");
+        throw new NotEnoughCredentialsException(user.getUsername());
     }
 }

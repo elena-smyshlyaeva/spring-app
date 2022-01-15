@@ -1,7 +1,6 @@
 package ru.sumbirsoft.chat.service;
 
 import org.springframework.security.core.Authentication;
-import ru.sumbirsoft.chat.domain.Members;
 import ru.sumbirsoft.chat.dto.room.RequestRoomDto;
 import ru.sumbirsoft.chat.dto.room.ResponseRoomDto;
 import java.util.List;
