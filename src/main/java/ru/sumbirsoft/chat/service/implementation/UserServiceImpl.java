@@ -1,6 +1,7 @@
 package ru.sumbirsoft.chat.service.implementation;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final UserMapper userMapper;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -61,6 +64,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ResponseUserDto create(RequestUserDto requestUserDto) {
+        requestUserDto.setPassword(passwordEncoder.encode(requestUserDto.getPassword()));
+
         return userMapper.userToResponseUserDto(
                 repository.save(
                         userMapper.requestUserDtoToUser(requestUserDto)
