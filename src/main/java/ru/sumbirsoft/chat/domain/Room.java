@@ -20,7 +20,7 @@ public class Room {
     private String name;
 
     @Column
-    private boolean isPrivate;
+    private boolean isPrivate = false;
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)

@@ -22,7 +22,7 @@ public class Message {
     private Room room;
 
     @Column(nullable = false)
-    private String text;
+    private String text = "";
 
     private Date sendDate;
 }

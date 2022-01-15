@@ -24,11 +24,11 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private Role role;
+    private Role role = Role.USER;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private Status status;
+    private Status status = Status.ACTIVE;
 
     @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
