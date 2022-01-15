@@ -7,7 +7,6 @@ import lombok.Setter;
 @Setter
 public class ResourceNotFoundException extends AbstractException {
     public ResourceNotFoundException(String message, String info) {
-        super();
-        super.info = info;
+        super(message, info);
     }
 }
