@@ -18,4 +18,10 @@ public interface UserService {
 
     ResponseMembersDto blockUser(long id, long roomId);
     ResponseMembersDto unblockUser(long id, long roomId);
+
+    void renameUser(String oldName, String newName, Authentication authentication);
+
+    long getIdByUsername (String username);
+
+    String processCommand(String command, String parameters, Authentication authentication);
 }

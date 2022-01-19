@@ -11,6 +11,7 @@ import ru.sumbirsoft.chat.domain.*;
 import ru.sumbirsoft.chat.dto.members.ResponseMembersDto;
 import ru.sumbirsoft.chat.dto.user.RequestUserDto;
 import ru.sumbirsoft.chat.dto.user.ResponseUserDto;
+import ru.sumbirsoft.chat.exceptions.NotEnoughCredentialsException;
 import ru.sumbirsoft.chat.exceptions.ResourceNotFoundException;
 import ru.sumbirsoft.chat.mapper.MembersMapper;
 import ru.sumbirsoft.chat.mapper.UserMapper;
@@ -33,6 +34,8 @@ public class UserServiceImpl implements UserService {
     private final MembersMapper membersMapper;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final RoomRepository roomRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -141,5 +144,72 @@ public class UserServiceImpl implements UserService {
         entry.setStatus(Status.ACTIVE);
         membersRepository.save(entry);
         return membersMapper.membersToResponseMembersDto(entry);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long getIdByUsername(String username) {
+        User user = repository.findByUsername(username).orElseThrow(
+                () -> new ResourceNotFoundException("User not found", username)
+        );
+        return user.getUserId();
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void renameUser(String oldName, String newName, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User querySender = repository.findByUsername(userDetails.getUsername()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found", userDetails.getUsername())
+        );
+
+        if (querySender.getRole() != Role.ADMIN)
+            throw new NotEnoughCredentialsException(querySender.getUsername());
+
+        User changeNameUser = repository.findByUsername(oldName).orElseThrow(
+                () -> new ResourceNotFoundException("User not found", oldName)
+        );
+        changeNameUser.setUsername(newName);
+        repository.save(changeNameUser);
+    }
+
+    private long getRoomIdByName(String name) {
+        Room room = roomRepository.findByName(name).orElseThrow(
+                () -> new ResourceNotFoundException("Room not found", name)
+        );
+        return room.getRoomId();
+    }
+
+    @Override
+    public String processCommand(String command, String parameters, Authentication authentication) {
+        String[] tokens = parameters.split(" ");
+        String username = tokens[0];
+        switch (command) {
+            case "rename": {
+                if (tokens.length > 1) {
+                    String newUsername = tokens[1];
+                    renameUser(username, newUsername, authentication);
+                    return "User {" + username + "} now has name {" + newUsername + "}!";
+                }
+            }
+            case "moderator": {
+                if (tokens.length > 2) {
+                    String roomName = tokens[1];
+                    String param = tokens[2];
+                    if (param.equals("-n")) {
+                        appointModer(getIdByUsername(username), getRoomIdByName(roomName));
+                        return "User {" + username + "} has role MODERATOR now!";
+                    }
+                    else {
+                        if (param.equals("-d")) {
+                            deleteModer(getIdByUsername(username), getRoomIdByName(roomName));
+                            return "User {" + username + "} has role USER now.";
+                        }
+                    }
+                    throw new IllegalArgumentException();
+                }
+            }
+        }
+        throw new IllegalArgumentException();
     }
 }
