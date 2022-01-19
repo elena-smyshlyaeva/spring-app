@@ -3,6 +3,7 @@ package ru.sumbirsoft.chat.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.sumbirsoft.chat.dto.members.ResponseMembersDto;
 import ru.sumbirsoft.chat.dto.user.RequestUserDto;
 import ru.sumbirsoft.chat.dto.user.ResponseUserDto;
 import ru.sumbirsoft.chat.service.UserService;
@@ -45,27 +46,31 @@ public class UserController {
         return userService.deleteById(id);
     }
 
-    @PutMapping("/{id}/moderator")
+    @PutMapping("/{id}/rooms/{roomId}/moderator")
     @PreAuthorize("hasAuthority('user:appoint_moder')")
-    public ResponseUserDto appointModer(@PathVariable (name = "id") long id) {
-        return userService.appointModer(id);
+    public ResponseMembersDto appointModer(@PathVariable (name = "id") long id,
+                                           @PathVariable (name ="roomId") long roomId) {
+        return userService.appointModer(id, roomId);
     }
 
-    @DeleteMapping("/{id}/moderator")
+    @DeleteMapping("/{id}/rooms/{roomId}/moderator")
     @PreAuthorize("hasAuthority('user:delete_moder')")
-    public ResponseUserDto deleteModer(@PathVariable (name = "id") long id){
-        return userService.deleteModer(id);
+    public ResponseMembersDto deleteModer(@PathVariable (name = "id") long id,
+                                          @PathVariable (name = "roomId") long roomId){
+        return userService.deleteModer(id, roomId);
     }
 
-    @DeleteMapping("/{id}/status")
+    @DeleteMapping("/{id}/rooms/{roomId}/status")
     @PreAuthorize("hasAuthority('user:ban')")
-    public ResponseUserDto blockUser(@PathVariable(name = "id") long id) {
-        return userService.blockUser(id);
+    public ResponseMembersDto blockUser(@PathVariable(name = "id") long id,
+                                     @PathVariable (name = "roomId") long roomId) {
+        return userService.blockUser(id, roomId);
     }
 
-    @PutMapping("/{id}/status")
+    @PutMapping("/{id}/rooms/{roomId}/status")
     @PreAuthorize("hasAuthority('user:unban')")
-    public ResponseUserDto unblockUser(@PathVariable(name = "id") long id) {
-        return userService.unblockUser(id);
+    public ResponseMembersDto unblockUser(@PathVariable(name = "id") long id,
+                                          @PathVariable (name = "roomId") long roomId) {
+        return userService.unblockUser(id, roomId);
     }
 }

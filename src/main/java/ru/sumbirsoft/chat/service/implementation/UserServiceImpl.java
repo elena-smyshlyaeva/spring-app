@@ -1,18 +1,21 @@
 package ru.sumbirsoft.chat.service.implementation;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.sumbirsoft.chat.domain.Permission;
-import ru.sumbirsoft.chat.domain.Role;
-import ru.sumbirsoft.chat.domain.Status;
-import ru.sumbirsoft.chat.domain.User;
+import ru.sumbirsoft.chat.domain.*;
+import ru.sumbirsoft.chat.dto.members.ResponseMembersDto;
 import ru.sumbirsoft.chat.dto.user.RequestUserDto;
 import ru.sumbirsoft.chat.dto.user.ResponseUserDto;
 import ru.sumbirsoft.chat.exceptions.ResourceNotFoundException;
+import ru.sumbirsoft.chat.mapper.MembersMapper;
 import ru.sumbirsoft.chat.mapper.UserMapper;
+import ru.sumbirsoft.chat.repository.MembersRepository;
+import ru.sumbirsoft.chat.repository.RoomRepository;
 import ru.sumbirsoft.chat.repository.UserRepository;
 import ru.sumbirsoft.chat.service.UserService;
 import java.util.List;
@@ -25,6 +28,9 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final UserMapper userMapper;
+
+    private final MembersRepository membersRepository;
+    private final MembersMapper membersMapper;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -87,53 +93,53 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public ResponseUserDto appointModer(long id) {
-        Optional<User> userOptional = repository.findById(id);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.setRole(Role.MODERATOR);
+    public ResponseMembersDto appointModer(long id, long roomId) {
+        MemberKey key = new MemberKey();
+        key.setUserId(id);
+        key.setRoomId(roomId);
 
-            return userMapper.userToResponseUserDto(user);
-        }
-        throw new ResourceNotFoundException("User doesn't exist", Long.toString(id));
+        Members entry = membersRepository.getById(key);
+        entry.setRole(Role.MODERATOR);
+        membersRepository.save(entry);
+        return membersMapper.membersToResponseMembersDto(entry);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public ResponseUserDto deleteModer(long id) {
-        Optional<User> userOptional = repository.findById(id);
-        if (userOptional.isPresent()) {
-            User user =  userOptional.get();
-            user.setRole(Role.USER);
+    public ResponseMembersDto deleteModer(long id, long roomId) {
+        MemberKey key = new MemberKey();
+        key.setUserId(id);
+        key.setRoomId(roomId);
 
-            return userMapper.userToResponseUserDto(user);
-        }
-        throw new ResourceNotFoundException("User doesn't exist", Long.toString(id));
+        Members entry = membersRepository.getById(key);
+        entry.setRole(Role.USER);
+        membersRepository.save(entry);
+        return membersMapper.membersToResponseMembersDto(entry);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public ResponseUserDto blockUser(long id) {
-        Optional<User> userOptional = repository.findById(id);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.setStatus(Status.BANNED);
+    public ResponseMembersDto blockUser(long id, long roomId) {
+        MemberKey key = new MemberKey();
+        key.setUserId(id);
+        key.setRoomId(roomId);
 
-            return userMapper.userToResponseUserDto(user);
-        }
-        throw new ResourceNotFoundException("User doesn't exist", Long.toString(id));
+        Members entry = membersRepository.getById(key);
+        entry.setStatus(Status.BANNED);
+        membersRepository.save(entry);
+        return membersMapper.membersToResponseMembersDto(entry);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public ResponseUserDto unblockUser(long id) {
-        Optional<User> userOptional = repository.findById(id);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.setStatus(Status.ACTIVE);
+    public ResponseMembersDto unblockUser(long id, long roomId) {
+        MemberKey key = new MemberKey();
+        key.setUserId(id);
+        key.setRoomId(roomId);
 
-            return userMapper.userToResponseUserDto(user);
-        }
-        throw new ResourceNotFoundException("User doesn't exist", Long.toString(id));
+        Members entry = membersRepository.getById(key);
+        entry.setStatus(Status.ACTIVE);
+        membersRepository.save(entry);
+        return membersMapper.membersToResponseMembersDto(entry);
     }
 }

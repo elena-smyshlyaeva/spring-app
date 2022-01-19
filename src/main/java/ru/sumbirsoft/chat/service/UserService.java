@@ -1,5 +1,7 @@
 package ru.sumbirsoft.chat.service;
 
+import org.springframework.security.core.Authentication;
+import ru.sumbirsoft.chat.dto.members.ResponseMembersDto;
 import ru.sumbirsoft.chat.dto.user.RequestUserDto;
 import ru.sumbirsoft.chat.dto.user.ResponseUserDto;
 import java.util.List;
@@ -11,9 +13,9 @@ public interface UserService {
     ResponseUserDto create(RequestUserDto requestUserDto);
     boolean deleteById(long id);
 
-    ResponseUserDto appointModer(long id);
-    ResponseUserDto deleteModer(long id);
+    ResponseMembersDto appointModer(long id, long roomId);
+    ResponseMembersDto deleteModer(long id, long roomId);
 
-    ResponseUserDto blockUser(long id);
-    ResponseUserDto unblockUser(long id);
+    ResponseMembersDto blockUser(long id, long roomId);
+    ResponseMembersDto unblockUser(long id, long roomId);
 }
