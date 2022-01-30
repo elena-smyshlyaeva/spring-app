@@ -1,12 +1,13 @@
 package ru.sumbirsoft.chat.domain;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.math.BigInteger;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Videos {
     private String id;
@@ -15,5 +16,9 @@ public class Videos {
 
     private long viewCount;
     private long likeCount;
-    private long dislikeCount;
+
+    @Override
+    public String toString() {
+        return "Video's title: " + title + "\nPublished: " + published;
+    }
 }
