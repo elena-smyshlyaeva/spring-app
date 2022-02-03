@@ -7,14 +7,13 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import ru.sumbirsoft.chat.domain.Videos;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+@Component
 public class YoutubeSearch {
 
     @Value("${youtube.apikey}")
@@ -51,7 +50,7 @@ public class YoutubeSearch {
                 }
             }
         }
-        return null;
+        throw new IllegalArgumentException("Illegal channel name!");
     }
 
     public List<Videos> getVideoList(String movie, String channelId, Long resultCount, Boolean sort) throws IOException {
@@ -100,7 +99,6 @@ public class YoutubeSearch {
                         Video video = videoListResponse.getItems().get(0);
                         videos.setViewCount(video.getStatistics().getViewCount().longValue());
                         videos.setLikeCount(video.getStatistics().getLikeCount().longValue());
-                        videos.setDislikeCount(video.getStatistics().getDislikeCount().longValue());
                     }
 
                     videosList.add(videos);
@@ -109,5 +107,23 @@ public class YoutubeSearch {
         }
 
         return videosList;
+    }
+
+    public String getComment(String videoId) throws IOException {
+        YouTube.CommentThreads.List commentList = youtube.commentThreads().list(Collections.singletonList("snippet"));
+        commentList.setKey(apikey);
+        commentList.setVideoId(videoId);
+
+        CommentThreadListResponse listResponse = commentList.execute();
+        List<CommentThread> commentThreads = listResponse.getItems();
+
+        if (commentThreads != null) {
+            Random random = new Random();
+            CommentThread item = commentThreads.get(random.nextInt(commentThreads.size()));
+
+            return "author: " + item.getSnippet().getTopLevelComment().getSnippet().getAuthorDisplayName() +
+                    "\ncomment: " + item.getSnippet().getTopLevelComment().getSnippet().getTextDisplay();
+        }
+        throw new IOException();
     }
 }
