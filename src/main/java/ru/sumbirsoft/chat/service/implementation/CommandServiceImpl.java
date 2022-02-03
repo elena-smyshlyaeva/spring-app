@@ -16,12 +16,11 @@ public class CommandServiceImpl {
 
     private final RoomService roomService;
     private final UserService userService;
-
-    UserRepository userRepository;
+    private final BotService botService;
 
     public String parse(String message, Authentication authentication) {
         //check the pattern of beginning
-        String regex = "//[a-z]{4}\\s[a-z]+\\s|[a-z]{4}\\s[a-z]+$";
+        String regex = "//[a-zA-Z]{4}\\s[a-zA-z]+\\s|[a-zA-Z]{4}\\s[a-zA-z]+$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(message);
         if (matcher.find()) {
@@ -46,6 +45,9 @@ public class CommandServiceImpl {
                         throw new IllegalArgumentException();
 
                     return userService.processCommand(command, parameters, authentication);
+                }
+                case "yBot": {
+                    return botService.processCommand(command, parameters, authentication);
                 }
             }
             return null;
