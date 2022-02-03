@@ -6,13 +6,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.sumbirsoft.chat.domain.Message;
+import ru.sumbirsoft.chat.domain.*;
 import ru.sumbirsoft.chat.dto.message.RequestMessageDto;
 import ru.sumbirsoft.chat.dto.message.ResponseMessageDto;
 import ru.sumbirsoft.chat.exceptions.BanStatusException;
+import ru.sumbirsoft.chat.exceptions.NotEnoughCredentialsException;
 import ru.sumbirsoft.chat.exceptions.ResourceNotFoundException;
 import ru.sumbirsoft.chat.mapper.MessageMapper;
 import ru.sumbirsoft.chat.mapper.UserMapper;
+import ru.sumbirsoft.chat.repository.MembersRepository;
 import ru.sumbirsoft.chat.repository.MessageRepository;
 import ru.sumbirsoft.chat.repository.RoomRepository;
 import ru.sumbirsoft.chat.repository.UserRepository;
@@ -32,6 +34,8 @@ public class MessageServiceImpl implements MessageService {
     private final UserRepository userRepository;
 
     private final RoomRepository roomRepository;
+
+    private final MembersRepository membersRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -82,13 +86,27 @@ public class MessageServiceImpl implements MessageService {
         if (!userDetails.isAccountNonLocked()) {
             throw new BanStatusException(userDetails.getUsername());
         }
+        User user = userRepository
+                .findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found", userDetails.getUsername()));
 
-        Optional<Message> messageOptional = repository.findById(id);
-        if (messageOptional.isPresent()) {
+        long userId = user.getUserId();
+
+        Message message =repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Message not found", Long.toString(id)));
+        long roomId = message.getRoom().getRoomId();
+
+        MemberKey userRoomId = new MemberKey();
+        userRoomId.setRoomId(roomId);
+        userRoomId.setUserId(userId);
+
+        Members entry = membersRepository.getById(userRoomId);
+
+        if ((entry.getRole() == Role.MODERATOR || entry.getRole() == Role.ADMIN) && entry.getStatus() == Status.ACTIVE) {
             repository.deleteById(id);
             return true;
         }
-        throw new ResourceNotFoundException("Message doesn't exist", Long.toString(id));
+        throw new NotEnoughCredentialsException(userDetails.getUsername());
     }
 
     @Override
