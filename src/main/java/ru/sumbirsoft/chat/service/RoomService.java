@@ -11,9 +11,13 @@ public interface RoomService {
     ResponseRoomDto edit(long id, RequestRoomDto requestUserDto);
     ResponseRoomDto create(RequestRoomDto requestUserDto);
     boolean deleteById(long id);
+    boolean deleteByName(String name);
+    long getIdByName(String name);
 
     ResponseRoomDto createRoom(RequestRoomDto requestRoomDto, Authentication authentication, boolean isPrivate);
     boolean addUser(long roomId, long userId, Authentication authentication);
     boolean deleteUserFromRoom(long roomId, long userId, Authentication authentication);
     ResponseRoomDto renameRoom(long roomId, String name, Authentication authentication);
+
+    String processCommand(String command, String parameters, Authentication authentication);
 }

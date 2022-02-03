@@ -17,6 +17,7 @@ import ru.sumbirsoft.chat.repository.MembersRepository;
 import ru.sumbirsoft.chat.repository.RoomRepository;
 import ru.sumbirsoft.chat.repository.UserRepository;
 import ru.sumbirsoft.chat.service.RoomService;
+import ru.sumbirsoft.chat.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,8 @@ public class RoomServiceImpl implements RoomService {
     private final RoomRepository repository;
     private final UserRepository userRepository;
     private final MembersRepository membersRepository;
+
+    private final UserService userService;
 
     private final RoomMapper roomMapper;
 
@@ -88,6 +91,13 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public boolean deleteByName(String name) {
+        //TODO
+        return false;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ResponseRoomDto createRoom(RequestRoomDto requestRoomDto, Authentication authentication, boolean isPrivate) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
@@ -141,10 +151,10 @@ public class RoomServiceImpl implements RoomService {
         if (!userDetails.isAccountNonLocked()) {
             throw new BanStatusException(userDetails.getUsername());
         }
-
         User user = userRepository
                 .findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found", userDetails.getUsername()));
+
         long userId = user.getUserId();
         long roomOwnerId = repository
                 .findById(roomId)
@@ -172,6 +182,13 @@ public class RoomServiceImpl implements RoomService {
         throw new NotEnoughCredentialsException(userDetails.getUsername());
     }
 
+    public long getIdByName(String name) {
+        Room room = repository.findByName(name).orElseThrow(
+                () -> new ResourceNotFoundException("Room not found", name)
+        );
+        return room.getRoomId();
+    }
+
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ResponseRoomDto renameRoom(long roomId, String name, Authentication authentication) {
@@ -197,5 +214,61 @@ public class RoomServiceImpl implements RoomService {
             return roomMapper.roomToResponseRoomDto(repository.save(room));
         }
         throw new NotEnoughCredentialsException(user.getUsername());
+    }
+
+    @Override
+    public String processCommand(String command, String parameters, Authentication authentication) {
+        String[] tokens = parameters.split(" ");
+        String name = tokens[0];
+
+        switch(command) {
+            case "create": {
+                RequestRoomDto room = new RequestRoomDto();
+                room.setName(name);
+
+                if (tokens.length > 1) {
+                    String isClose = tokens[1];
+                    if (isClose.equals("-c"))
+                        createRoom(room, authentication, true);
+                    else
+                        throw new IllegalArgumentException();
+                }
+                //use default values: public room
+                else {
+                    createRoom(room, authentication, false);
+                }
+
+                return "Room {" + name + "} was successfully created!";
+            }
+            case "remove": {
+                deleteByName(name);
+                return "Room {" + name + "} was successfully deleted!";
+            }
+            case "rename": {
+                if (tokens.length > 1) {
+                    String changedName = tokens[1];
+                    renameRoom(getIdByName(name), changedName, authentication);
+                    return "Room {" + name + "} now has name {" + changedName + "}!";
+                }
+                throw new IllegalArgumentException();
+            }
+            case "connect": {
+                if (tokens.length > 2) {
+                    String param = tokens[1];
+                    if (param.startsWith("-l")) {
+                        String username = tokens[2];
+                        addUser(getIdByName(name), userService.getIdByUsername(username), authentication);
+
+                        return "User {" + username + "} has been added in room {" + name + "}!";
+                    }
+                }
+                throw new IllegalArgumentException();
+            }
+            //TODO
+            case "disconnect": {
+
+            }
+        }
+        throw new IllegalArgumentException();
     }
 }
